@@ -4,7 +4,7 @@ const port = 5000
 
 const app = express()
 
-app.use(express.static('./src/public'))
+app.use(express.static('public'))
 
 app.engine('hbs', handlebars.engine({
     extname: 'hbs'
