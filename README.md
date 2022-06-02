@@ -1,1 +1,1 @@
-# Cubicle-SoftUni-Practice
+# Cube-SoftUni-Practice
