@@ -26,4 +26,8 @@ router.post('/create', (req, res) => {
     res.redirect('/')
 })
 
+router.get('/create-accessory', (req, res) => {
+    res.render('createAccessory')
+})
+
 module.exports = router
