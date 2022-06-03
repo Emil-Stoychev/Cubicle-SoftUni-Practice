@@ -1,6 +1,7 @@
-const cubes = require('../db.json')
+const { Cube } = require('../models/cubesSchema')
 
-exports.details = (req, res) => {
-    let currCube = cubes.find(x => x.id == req.params.id)
+exports.details = async(req, res) => {
+    let currCube = await Cube.findById(req.params.id).lean()
+
     res.render('details', { currCube })
 }
