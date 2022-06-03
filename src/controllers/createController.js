@@ -1,7 +1,6 @@
 const router = require('express').Router()
-let cubes = require('../db.json')
-const fs = require('fs/promises')
-const path = require('path')
+const { Cube } = require('../models/cubesSchema')
+const { Accessory } = require('../models/accessorySchema')
 
 router.get('/create', (req, res) => {
     res.render('create')
@@ -16,18 +15,46 @@ router.post('/create', (req, res) => {
         }
     }
 
-    let id = cubes[cubes.length - 1].id
-    cube.id = id + 1
-
-    cubes.push(cube)
-
-    fs.writeFile(path.resolve('src', 'db.json'), JSON.stringify(cubes, '', 4), { encoding: 'utf-8' })
+    Cube.create(cube)
 
     res.redirect('/')
 })
 
 router.get('/create-accessory', (req, res) => {
     res.render('createAccessory')
+})
+
+router.post('/create-accessory', async(req, res) => {
+    let acc = req.body
+
+    if (!acc.name || !acc.description || !acc.imageUrl) {
+        if (acc.name == '' || acc.name.length == 0 || acc.description == '' || acc.description.length == 0 || acc.imageUrl == '' || acc.imageUrl.length == 0) {
+            return res.status(400).send('Invalid request!')
+        }
+    }
+
+    Accessory.create(acc)
+
+    res.redirect('/')
+})
+
+router.get('/add-accessory/:cubeId', async(req, res) => {
+    let currCube = await Cube.findById(req.params.cubeId).lean()
+    let accessories = await Accessory.find({ _id: { $nin: currCube.accessories } }).lean()
+
+
+    res.render('attachAccessory', { currCube, accessories })
+})
+
+router.post('/add-accessory/:cubeId', async(req, res) => {
+    let currCube = await Cube.findById(req.params.cubeId)
+    let currAccessory = await Accessory.findById(req.body.accessory)
+
+    currCube.accessories.push(currAccessory)
+
+    currCube.save()
+
+    res.redirect(`/details/${currCube._id}`)
 })
 
 module.exports = router
