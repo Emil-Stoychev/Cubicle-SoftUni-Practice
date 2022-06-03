@@ -10,7 +10,7 @@ app.use(express.static('public'))
 
 app.use(express.urlencoded({ extended: false }))
 
-const url = 'mongodb://localhost:27017'
+const url = 'mongodb://localhost:27017/CubeServer'
 mongoose.connect(url)
     .then(() => {
         console.log('Successfuly connected to DB');
